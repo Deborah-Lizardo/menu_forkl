@@ -1,9 +1,7 @@
 package com.cardapio_digital.model;
-
+import java.util.List;// interface
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-
 
 /**
  * Classe que representa uma Tabela Hash de pratos.
@@ -13,20 +11,17 @@ public class HashTablePratos {
 
     private static final int TAMANHO_INICIAL = 10;
     private static final double FATOR_CARGA_MAXIMO = 0.75;
-    /** Vetor de listas encadeadas que armazena os pratos */
-
+    /** Definir o vetor de listas encadeadas */
     private LinkedList<Prato>[] tabelaHash;
     /**
+     * Atributos aux:
      * Tamanho do vetor da tabela hash.
      * - Define a quantidade de posições na tabela hash.
-     * - Cada posição guarda uma lista encadeada (LinkedList) de pratos,
-     *   que permite armazenar múltiplos pratos no mesmo índice (encadeamento externo).
-     * - Importante: esse número **não limita a quantidade de pratos** que podem ser
-     *   armazenados na tabela; cada lista encadeada pode crescer dinamicamente.
+     *  Contador
+     * - Vai retornar a quantidade de elementos que a tabela hash possui
      */
     private int tamanhoVetor;
     private int quantidadeElementos;
-
     /**
      * Construtor da tabela hash.
      *
@@ -60,12 +55,7 @@ public class HashTablePratos {
      *
      * Este método recebe um objeto Prato e o adiciona na tabela hash.
      * O índice na tabela é calculado a partir do nome do prato, mas o
-     * objeto completo é armazenado na lista encadeada para preservar todos
-     * os atributos do prato (preço, tempo de preparo, descrição etc.).
-     *
-     * Segue os princípios de programação orientada a objetos:
-     * - Encapsulamento: acessa atributos do prato apenas via getters.
-     * - Coesão: o método tem apenas uma responsabilidade: inserir o prato (conferindo se o mesmo já existe).
+     * objeto completo é armazenado na lista encadeada
      *
      * @param p Prato a ser inserido na tabela hash
      * Insere um prato na tabela hash
@@ -76,31 +66,22 @@ public class HashTablePratos {
             return;
         }
 
-        // Verifica se precisa redimensionar
         if (precisaRedimensionar()) {
             redimensionar();
         }
-
         int indice = funcaoHash(p.getNome());
         LinkedList<Prato> lista = tabelaHash[indice];
 
-        // Verifica se já existe um prato com o mesmo nome
         for (Prato existente : lista) {
             if (existente.equals(p)) {
-                return; // Não permite duplicatas
+                return;
             }
         }
-
         lista.add(p);
         quantidadeElementos++;
     }
-
     /**
      * Busca um prato na tabela hash pelo nome (chave).
-     *
-     * - Calcula o índice da chave.
-     * - Percorre a lista naquela posição.
-     * - Retorna o prato se encontrado ou null se não existir.
      *
      * @param nome Nome do prato a buscar
      * @return Prato encontrado ou null
@@ -123,20 +104,15 @@ public class HashTablePratos {
         }
         return null;
     }
-
     /**
      * Remove um prato da tabela hash pelo nome.
-     *
-     * - Calcula o índice da chave.
-     * - Percorre a lista naquela posição.
-     * - Remove o prato se encontrado.
      *
      * @param nome Nome do prato a remover
      * @return true se o prato foi removido, false caso contrário
      * Remove um prato pelo nome
      * Retorna true se removido com sucesso, false caso contrário
+     *
      */
-
     public boolean removerPrato(String nome) {
         if (nome == null || nome.isEmpty()) {
             return false;
@@ -165,14 +141,10 @@ public class HashTablePratos {
      * Objetivo: permitir operações externas (como salvar em arquivo ou exibir no sistema)
      * sem expor diretamente a estrutura interna da tabela hash.
      *
-     * Princípios de POO aplicados:
-     * - Encapsulamento: o método não expõe a estrutura interna da tabela.
-     * - Coesão: tem uma única responsabilidade — converter e exportar os dados.
-     *
      * @return Um array contendo todos os pratos armazenados na tabela hash.
      */
     public Prato[] exportarPratos() {
-        List<Prato> lista = new ArrayList<>();
+        List<Prato> lista = new ArrayList<>(); //temp
 
         for (LinkedList<Prato> bucket : tabelaHash) {
             if (bucket != null) {
@@ -183,69 +155,6 @@ public class HashTablePratos {
         return lista.toArray(new Prato[0]);
     }
 
-    /**
-     * Carrega uma lista de pratos na tabela hash.
-     * - Este método é o inverso de exportar: ele recebe uma lista de pratos e os insere
-     *   novamente na estrutura da tabela hash.
-     * - Cada prato é reinserido utilizando o método inserirPrato(), garantindo que:
-     *   → A função hash seja aplicada corretamente.
-     *   → As regras de duplicação sejam respeitadas.
-     * É útil, por exemplo, para restaurar dados salvos em arquivo.
-     *
-     * @param pratos Lista de objetos Prato a serem inseridos.
-     */
-    public void carregarPratos(List<Prato> pratos) {
-        if (pratos == null) {
-            return;
-        }
-
-        for (Prato p : pratos) {
-            if (p != null) {
-                inserirPrato(p);
-            }
-        }
-    }
-
-    /**
-     * Retorna a quantidade total de elementos armazenados na tabela hash.
-     * - Representa o número total de pratos, não o tamanho do vetor.
-     * - Mantém o controle interno de quantos elementos estão realmente armazenados.
-     *
-     * @return Quantidade de elementos (pratos) atualmente na tabela.
-     */
-    public int getQuantidadeElementos() {
-        return quantidadeElementos;
-    }
-
-    /**
-     * Verifica se a tabela hash está vazia.
-     * - Uma tabela está vazia se a contagem de elementos for zero.
-     * - Método útil para verificações antes de realizar operações (como listar ou exportar).
-     *
-     * @return true se não houver elementos, false caso contrário.
-     */
-    public boolean isEmpty() {
-        return quantidadeElementos == 0;
-    }
-
-    /**
-     * Limpa todos os elementos armazenados na tabela hash.
-     *
-     * - Percorre todo o vetor e limpa cada lista encadeada individualmente.
-     * - Após a limpeza, redefine a quantidade de elementos para zero.
-     *
-     * Importante: este método mantém o tamanho do vetor inalterado — apenas remove os dados.
-     *
-     * Padrão de projeto: método utilitário para reinicializar a estrutura.
-     */
-    public void limpar() {
-        for (int i = 0; i < tamanhoVetor; i++) {
-            if (tabelaHash[i] != null) {
-                tabelaHash[i].clear();
-            }
-        }
-        quantidadeElementos = 0;
-    }
 
     /**
      * Verifica se a tabela precisa ser redimensionada.
@@ -293,6 +202,31 @@ public class HashTablePratos {
             }
         }
     }
+// ======================================================
+// MÉTODOS DE APOIO (não implementados no trabalho principal)
+// Estes métodos foram deixados prontos para uso em exercícios
+// futuros ou como suporte.
+// ======================================================
+    /**
+     * Carrega uma lista de pratos na tabela hash e insere novamente.
+     * - Cada prato é reinserido utilizando o método inserirPrato(), garantindo que:
+     *   → A função hash seja aplicada corretamente.
+     *   → As regras de duplicação sejam respeitadas.
+     * É útil, por exemplo, para restaurar dados salvos em arquivo.
+     *
+     * @param pratos Lista de objetos Prato a serem inseridos.
+     */
+    public void carregarPratos(List<Prato> pratos) {
+        if (pratos == null) {
+            return;
+        }
+
+        for (Prato p : pratos) {
+            if (p != null) {
+                inserirPrato(p);
+            }
+        }
+    }
 
     /**
      * Retorna o fator de carga atual da tabela.
@@ -302,6 +236,44 @@ public class HashTablePratos {
      */
     public double getFatorCarga() {
         return (double) quantidadeElementos / tamanhoVetor;
+    }
+
+    /**
+     * Retorna a quantidade total de elementos armazenados na tabela hash.
+     *
+     * - Mantém o controle interno de quantos elementos estão realmente armazenados.
+     *
+     * @return Quantidade de elementos (pratos) atualmente na tabela.
+     */
+    public int getQuantidadeElementos() {
+        return quantidadeElementos;
+    }
+
+    /**
+     * Verifica se a tabela hash está vazia.
+     *
+     * @return true se não houver elementos, false caso contrário.
+     */
+
+    public boolean isEmpty() {
+        return quantidadeElementos == 0;
+    }
+
+    /**
+     * Limpa todos os elementos armazenados na tabela hash.
+     *
+     * - Percorre todo o vetor e limpa cada lista encadeada individualmente.
+     * - Após a limpeza, redefine a quantidade de elementos para zero.
+     *
+     * Importante: este método mantém o tamanho do vetor inalterado — apenas remove os dados.
+     */
+    public void limpar() {
+        for (int i = 0; i < tamanhoVetor; i++) {
+            if (tabelaHash[i] != null) {
+                tabelaHash[i].clear();
+            }
+        }
+        quantidadeElementos = 0;
     }
 
     /**
