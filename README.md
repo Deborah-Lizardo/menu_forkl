@@ -29,6 +29,38 @@ O objetivo é aplicar, na prática, conceitos de:
 - CRUD (Create, Read, Update, Delete)
 - Arquitetura MVC
 
+🗂️ Estrutura do Projeto
+```
+src/
+├── controller/
+├── dao/
+├── model/
+├── utils/
+├── view/
+└── Main.java
+```
+
+## 🚀 Funcionalidades
+- Adicionar, editar e remover pratos
+- Listar pratos do banco de dados
+- Buscar pratos por nome usando Tabela Hash
+- Ordenar pratos por:
+- Nome
+- Preço
+- Tempo de preparo
+- Comparar desempenho dos algoritmos de ordenação
+
+## ▶️ Como Executar
+- Configurar o banco de dados MySQL
+- Ajustar as credenciais no ConnectionFactory
+- Executar o projeto (Main.java ou aplicação JavaFX)
+- Utilizar a interface para interagir com o sistema
+
+## 🎯 Objetivo Acadêmico
+
+Demonstrar a integração entre estruturas de dados, banco de dados e interface gráfica em uma aplicação prática.
+
+
 ## 🛢️ Banco de Dados
 
 ```sql
@@ -38,4 +70,7 @@ CREATE TABLE pratos (
     preco DECIMAL(10,2) NOT NULL,
     tempo_preparo INT NOT NULL,
     descricao TEXT
-);
+); ```
+
+
+
