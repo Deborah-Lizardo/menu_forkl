@@ -70,7 +70,12 @@ CREATE TABLE pratos (
     preco DECIMAL(10,2) NOT NULL,
     tempo_preparo INT NOT NULL,
     descricao TEXT
-); ```
+);
+```
+## 👥 Integrantes
+- Deborah Lizardo
+- Ana Julia
+- Juliana Aparecida Vecchi
 
 
 
